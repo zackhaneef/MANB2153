@@ -1,0 +1,27 @@
+import keras
+from keras.models import Sequential
+from keras.layers import Dense, Dropout, Activation
+from keras.optimizers import SGD
+from keras.utils import to_categorical
+from sklearn.model_selection import train_test_split
+from sklearn.datasets import load_iris
+data = load_iris()
+y = to_categorical(data['target'])
+x = data ['data']
+x_train, x_test,y_train,y_test = train_test_split(x,y,test_size = 0.33, random_state = 42)
+
+model = Sequential()
+model.add(Dense(64, activation='relu', input_dim=4))
+model.add(Dropout(0.5))
+model.add(Dense(64, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(3, activation='softmax'))
+
+sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+model.compile(loss='categorical_crossentropy',
+              optimizer=sgd,
+              metrics=['accuracy'])
+
+model.fit(x_train, y_train,
+          epochs=20,batch_size=128)
+score = model.evaluate(x_test, y_test, batch_size=128)
